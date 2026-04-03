@@ -1,0 +1,598 @@
+[
+  {
+    "id": "shoe-001",
+    "slug": "urban-runner-x1",
+    "name": "Urban Runner X1",
+    "description": "Lightweight performance sneakers with breathable mesh upper and responsive cushioning.",
+    "category": "shoes",
+    "price": 12500,
+    "originalPrice": 15000,
+    "currency": "INR",
+    "variants": [
+      {
+        "id": "shoe-001-black",
+        "color": {
+          "name": "Black",
+          "hex": "#0a0a0a"
+        },
+        "sizes": [
+          {
+            "size": 38,
+            "inStock": true
+          },
+          {
+            "size": 40,
+            "inStock": true
+          },
+          {
+            "size": 42,
+            "inStock": true
+          },
+          {
+            "size": 44,
+            "inStock": true
+          }
+        ],
+        "images": [
+          "/images/products/urban-runner-black-1.svg"
+        ]
+      },
+      {
+        "id": "shoe-001-white",
+        "color": {
+          "name": "White",
+          "hex": "#f5f5f5"
+        },
+        "sizes": [
+          {
+            "size": 38,
+            "inStock": true
+          },
+          {
+            "size": 40,
+            "inStock": true
+          },
+          {
+            "size": 42,
+            "inStock": false
+          },
+          {
+            "size": 44,
+            "inStock": true
+          }
+        ],
+        "images": [
+          "/images/products/urban-runner-white-1.svg"
+        ]
+      }
+    ],
+    "defaultVariantId": "shoe-001-black",
+    "modelPath": "/models/shoes/urban-runner-x1.glb",
+    "tags": [
+      "new",
+      "featured"
+    ],
+    "featured": true,
+    "createdAt": "2026-03-15"
+  },
+  {
+    "id": "shoe-002",
+    "slug": "classic-leather-boot",
+    "name": "Classic Leather Boot",
+    "description": "Handcrafted leather boots with rugged sole, built to last through any season.",
+    "category": "shoes",
+    "price": 18500,
+    "currency": "INR",
+    "variants": [
+      {
+        "id": "shoe-002-brown",
+        "color": {
+          "name": "Brown",
+          "hex": "#8B4513"
+        },
+        "sizes": [
+          {
+            "size": 40,
+            "inStock": true
+          },
+          {
+            "size": 42,
+            "inStock": true
+          },
+          {
+            "size": 44,
+            "inStock": true
+          }
+        ],
+        "images": [
+          "/images/products/leather-boot-brown-1.svg"
+        ]
+      },
+      {
+        "id": "shoe-002-black",
+        "color": {
+          "name": "Black",
+          "hex": "#1a1a1a"
+        },
+        "sizes": [
+          {
+            "size": 40,
+            "inStock": true
+          },
+          {
+            "size": 42,
+            "inStock": true
+          },
+          {
+            "size": 44,
+            "inStock": false
+          }
+        ],
+        "images": [
+          "/images/products/leather-boot-black-1.svg"
+        ]
+      }
+    ],
+    "defaultVariantId": "shoe-002-brown",
+    "modelPath": "/models/shoes/classic-leather-boot.glb",
+    "tags": [
+      "bestseller"
+    ],
+    "featured": false,
+    "createdAt": "2026-02-20"
+  },
+  {
+    "id": "shoe-003",
+    "slug": "street-high-top",
+    "name": "Street High Top",
+    "description": "Bold high-top sneakers with premium suede and signature gold accents.",
+    "category": "shoes",
+    "price": 14000,
+    "currency": "INR",
+    "variants": [
+      {
+        "id": "shoe-003-navy",
+        "color": {
+          "name": "Navy",
+          "hex": "#1B2838"
+        },
+        "sizes": [
+          {
+            "size": 38,
+            "inStock": true
+          },
+          {
+            "size": 40,
+            "inStock": true
+          },
+          {
+            "size": 42,
+            "inStock": true
+          }
+        ],
+        "images": [
+          "/images/products/high-top-navy-1.svg"
+        ]
+      }
+    ],
+    "defaultVariantId": "shoe-003-navy",
+    "tags": [
+      "new"
+    ],
+    "featured": true,
+    "createdAt": "2026-03-28"
+  },
+  {
+    "id": "watch-001",
+    "slug": "chronos-elite",
+    "name": "Chronos Elite",
+    "description": "Precision automatic movement with sapphire crystal and stainless steel case.",
+    "category": "watches",
+    "price": 35000,
+    "originalPrice": 42000,
+    "currency": "INR",
+    "variants": [
+      {
+        "id": "watch-001-silver",
+        "color": {
+          "name": "Silver",
+          "hex": "#C0C0C0"
+        },
+        "sizes": [
+          {
+            "size": "40mm",
+            "inStock": true
+          },
+          {
+            "size": "42mm",
+            "inStock": true
+          }
+        ],
+        "images": [
+          "/images/products/chronos-silver-1.svg"
+        ]
+      },
+      {
+        "id": "watch-001-gold",
+        "color": {
+          "name": "Gold",
+          "hex": "#c9a84c"
+        },
+        "sizes": [
+          {
+            "size": "40mm",
+            "inStock": true
+          },
+          {
+            "size": "42mm",
+            "inStock": true
+          }
+        ],
+        "images": [
+          "/images/products/chronos-gold-1.svg"
+        ]
+      }
+    ],
+    "defaultVariantId": "watch-001-silver",
+    "modelPath": "/models/watches/chronos-elite.glb",
+    "tags": [
+      "featured",
+      "bestseller"
+    ],
+    "featured": true,
+    "createdAt": "2026-01-10"
+  },
+  {
+    "id": "watch-002",
+    "slug": "minimal-day",
+    "name": "Minimal Day",
+    "description": "Clean minimalist design with genuine leather strap and Japanese quartz movement.",
+    "category": "watches",
+    "price": 18000,
+    "currency": "INR",
+    "variants": [
+      {
+        "id": "watch-002-black",
+        "color": {
+          "name": "Black",
+          "hex": "#0a0a0a"
+        },
+        "sizes": [
+          {
+            "size": "38mm",
+            "inStock": true
+          },
+          {
+            "size": "40mm",
+            "inStock": true
+          }
+        ],
+        "images": [
+          "/images/products/minimal-day-black-1.svg"
+        ]
+      },
+      {
+        "id": "watch-002-tan",
+        "color": {
+          "name": "Tan",
+          "hex": "#D2B48C"
+        },
+        "sizes": [
+          {
+            "size": "38mm",
+            "inStock": true
+          },
+          {
+            "size": "40mm",
+            "inStock": true
+          }
+        ],
+        "images": [
+          "/images/products/minimal-day-tan-1.svg"
+        ]
+      }
+    ],
+    "defaultVariantId": "watch-002-black",
+    "modelPath": "/models/watches/minimal-day.glb",
+    "tags": [
+      "new"
+    ],
+    "featured": false,
+    "createdAt": "2026-03-01"
+  },
+  {
+    "id": "watch-003",
+    "slug": "sport-chrono",
+    "name": "Sport Chrono",
+    "description": "Water-resistant sports chronograph with silicone strap and luminous dial.",
+    "category": "watches",
+    "price": 22000,
+    "currency": "INR",
+    "variants": [
+      {
+        "id": "watch-003-black",
+        "color": {
+          "name": "Black",
+          "hex": "#0a0a0a"
+        },
+        "sizes": [
+          {
+            "size": "42mm",
+            "inStock": true
+          },
+          {
+            "size": "44mm",
+            "inStock": true
+          }
+        ],
+        "images": [
+          "/images/products/sport-chrono-black-1.svg"
+        ]
+      }
+    ],
+    "defaultVariantId": "watch-003-black",
+    "tags": [
+      "featured"
+    ],
+    "featured": true,
+    "createdAt": "2026-02-15"
+  },
+  {
+    "id": "cloth-001",
+    "slug": "premium-oversized-tee",
+    "name": "Premium Oversized Tee",
+    "description": "280gsm heavyweight cotton with drop shoulders and relaxed fit.",
+    "category": "clothing",
+    "price": 4500,
+    "currency": "INR",
+    "variants": [
+      {
+        "id": "cloth-001-black",
+        "color": {
+          "name": "Black",
+          "hex": "#0a0a0a"
+        },
+        "sizes": [
+          {
+            "size": "S",
+            "inStock": true
+          },
+          {
+            "size": "M",
+            "inStock": true
+          },
+          {
+            "size": "L",
+            "inStock": true
+          },
+          {
+            "size": "XL",
+            "inStock": true
+          }
+        ],
+        "images": [
+          "/images/products/oversized-tee-black-1.svg"
+        ]
+      },
+      {
+        "id": "cloth-001-cream",
+        "color": {
+          "name": "Cream",
+          "hex": "#FFFDD0"
+        },
+        "sizes": [
+          {
+            "size": "S",
+            "inStock": true
+          },
+          {
+            "size": "M",
+            "inStock": true
+          },
+          {
+            "size": "L",
+            "inStock": true
+          },
+          {
+            "size": "XL",
+            "inStock": false
+          }
+        ],
+        "images": [
+          "/images/products/oversized-tee-cream-1.svg"
+        ]
+      }
+    ],
+    "defaultVariantId": "cloth-001-black",
+    "tags": [
+      "bestseller"
+    ],
+    "featured": true,
+    "createdAt": "2026-03-20"
+  },
+  {
+    "id": "cloth-002",
+    "slug": "tech-cargo-pants",
+    "name": "Tech Cargo Pants",
+    "description": "Water-resistant cargo pants with articulated knees and adjustable waist.",
+    "category": "clothing",
+    "price": 7500,
+    "originalPrice": 9000,
+    "currency": "INR",
+    "variants": [
+      {
+        "id": "cloth-002-black",
+        "color": {
+          "name": "Black",
+          "hex": "#0a0a0a"
+        },
+        "sizes": [
+          {
+            "size": "S",
+            "inStock": true
+          },
+          {
+            "size": "M",
+            "inStock": true
+          },
+          {
+            "size": "L",
+            "inStock": true
+          },
+          {
+            "size": "XL",
+            "inStock": true
+          }
+        ],
+        "images": [
+          "/images/products/cargo-pants-black-1.svg"
+        ]
+      },
+      {
+        "id": "cloth-002-olive",
+        "color": {
+          "name": "Olive",
+          "hex": "#556B2F"
+        },
+        "sizes": [
+          {
+            "size": "M",
+            "inStock": true
+          },
+          {
+            "size": "L",
+            "inStock": true
+          },
+          {
+            "size": "XL",
+            "inStock": true
+          }
+        ],
+        "images": [
+          "/images/products/cargo-pants-olive-1.svg"
+        ]
+      }
+    ],
+    "defaultVariantId": "cloth-002-black",
+    "tags": [
+      "new",
+      "featured"
+    ],
+    "featured": true,
+    "createdAt": "2026-03-25"
+  },
+  {
+    "id": "cloth-003",
+    "slug": "essential-hoodie",
+    "name": "Essential Hoodie",
+    "description": "Fleece-lined heavyweight hoodie with kangaroo pocket and ribbed cuffs.",
+    "category": "clothing",
+    "price": 6500,
+    "currency": "INR",
+    "variants": [
+      {
+        "id": "cloth-003-charcoal",
+        "color": {
+          "name": "Charcoal",
+          "hex": "#36454F"
+        },
+        "sizes": [
+          {
+            "size": "S",
+            "inStock": true
+          },
+          {
+            "size": "M",
+            "inStock": true
+          },
+          {
+            "size": "L",
+            "inStock": true
+          },
+          {
+            "size": "XL",
+            "inStock": true
+          },
+          {
+            "size": "XXL",
+            "inStock": true
+          }
+        ],
+        "images": [
+          "/images/products/hoodie-charcoal-1.svg"
+        ]
+      },
+      {
+        "id": "cloth-003-black",
+        "color": {
+          "name": "Black",
+          "hex": "#0a0a0a"
+        },
+        "sizes": [
+          {
+            "size": "M",
+            "inStock": true
+          },
+          {
+            "size": "L",
+            "inStock": true
+          },
+          {
+            "size": "XL",
+            "inStock": true
+          }
+        ],
+        "images": [
+          "/images/products/hoodie-black-1.svg"
+        ]
+      }
+    ],
+    "defaultVariantId": "cloth-003-charcoal",
+    "tags": [
+      "bestseller"
+    ],
+    "featured": false,
+    "createdAt": "2026-01-30"
+  },
+  {
+    "id": "cloth-004",
+    "slug": "structured-jacket",
+    "name": "Structured Jacket",
+    "description": "Tailored minimalist jacket with hidden zip closure and internal pockets.",
+    "category": "clothing",
+    "price": 12000,
+    "currency": "INR",
+    "variants": [
+      {
+        "id": "cloth-004-black",
+        "color": {
+          "name": "Black",
+          "hex": "#0a0a0a"
+        },
+        "sizes": [
+          {
+            "size": "M",
+            "inStock": true
+          },
+          {
+            "size": "L",
+            "inStock": true
+          },
+          {
+            "size": "XL",
+            "inStock": true
+          }
+        ],
+        "images": [
+          "/images/products/jacket-black-1.svg"
+        ]
+      }
+    ],
+    "defaultVariantId": "cloth-004-black",
+    "tags": [
+      "new"
+    ],
+    "featured": false,
+    "createdAt": "2026-03-30"
+  }
+]
