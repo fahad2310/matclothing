@@ -24,8 +24,20 @@ export function HeroSection() {
   });
 
   return (
-    <section className="relative border-b border-border">
-      <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-[1400px] grid-cols-1 items-center gap-8 px-6 py-16 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:px-12 lg:py-0">
+    <section className="relative overflow-hidden border-b border-border">
+      {/* Structural grid — faint column rules, the way a lookbook is set out */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 mx-auto hidden max-w-[1400px] px-6 lg:block lg:px-12"
+      >
+        <div className="grid h-full grid-cols-12">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div key={i} className="border-l border-border/45 last:border-r" />
+          ))}
+        </div>
+      </div>
+
+      <div className="relative mx-auto grid min-h-[calc(100vh-4rem)] max-w-[1400px] grid-cols-1 items-center gap-8 px-6 py-16 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:px-12 lg:py-0">
         {/* Left — the wordmark column */}
         <div className="order-2 lg:order-1">
           <motion.div {...rise(0.1)}>
@@ -34,11 +46,27 @@ export function HeroSection() {
             </SpecEyebrow>
           </motion.div>
 
-          <motion.div {...rise(0.2)} className="mt-8">
-            <Wordmark
-              as="h1"
-              className="text-[clamp(2.75rem,9.5vw,7.5rem)] text-foreground"
-            />
+          {/*
+           * The wordmark scales with scroll and the two halves part
+           * slightly — the serif/sans collision is the identity, so the
+           * page opens by pulling it apart and letting it close.
+           */}
+          <motion.div
+            initial={reduceMotion ? undefined : { opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 1.1, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            className="mt-8"
+          >
+            <motion.div
+              initial={reduceMotion ? undefined : { letterSpacing: "0.08em" }}
+              animate={{ letterSpacing: "0em" }}
+              transition={{ duration: 1.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <Wordmark
+                as="h1"
+                className="text-[clamp(2.75rem,9.5vw,7.5rem)] text-foreground"
+              />
+            </motion.div>
           </motion.div>
 
           <motion.p
@@ -90,14 +118,35 @@ export function HeroSection() {
           </motion.div>
         </div>
 
-        {/* Right — the 3D study, framed like a plate in a lookbook */}
+        {/* Right — the 3D study, framed and captioned like a lookbook plate */}
         <motion.div
-          initial={reduceMotion ? undefined : { opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.4, delay: 0.4 }}
-          className="order-1 aspect-[4/5] w-full border border-border bg-surface lg:order-2 lg:aspect-auto lg:h-[78vh]"
+          initial={reduceMotion ? undefined : { opacity: 0, scale: 0.97 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1.5, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
+          className="relative order-1 aspect-[4/5] w-full border border-border bg-surface lg:order-2 lg:aspect-auto lg:h-[78vh]"
         >
           <HeroScene className="h-full w-full" />
+
+          {/* Corner registration marks — printer's crop, not decoration */}
+          {(
+            [
+              "left-0 top-0 border-l border-t",
+              "right-0 top-0 border-r border-t",
+              "left-0 bottom-0 border-l border-b",
+              "right-0 bottom-0 border-r border-b",
+            ] as const
+          ).map((pos) => (
+            <span
+              key={pos}
+              aria-hidden
+              className={`absolute h-5 w-5 border-foreground/45 ${pos}`}
+            />
+          ))}
+
+          <div className="absolute inset-x-0 bottom-0 flex items-center justify-between border-t border-border bg-background/80 px-4 py-2.5 backdrop-blur-sm">
+            <span className="spec-label">Plate 01 — Study</span>
+            <span className="spec-label">{SEASON}</span>
+          </div>
         </motion.div>
       </div>
 

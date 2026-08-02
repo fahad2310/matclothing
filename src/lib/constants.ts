@@ -35,6 +35,23 @@ export const CATEGORIES = [
   { slug: "shoes", label: "Shoes", description: "Step into style" },
 ] as const;
 
+/**
+ * All three accounts belong to Brand Industrys — one house, three feeds.
+ */
 export const SOCIAL_LINKS = {
   instagram: "https://www.instagram.com/brand_industrys",
 } as const;
+
+export const INSTAGRAM_ACCOUNTS = [
+  { handle: "brand_industrys", label: "Main", url: "https://www.instagram.com/brand_industrys" },
+  {
+    handle: "stylish_factories",
+    label: "Stylish Factories",
+    url: "https://www.instagram.com/stylish_factories",
+  },
+  {
+    handle: "imp_warehouse",
+    label: "IMP Warehouse",
+    url: "https://www.instagram.com/imp_warehouse",
+  },
+] as const;

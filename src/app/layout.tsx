@@ -4,6 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { LoadingScreen } from "@/components/layout/LoadingScreen";
 import { SmoothScroll } from "@/components/animations/SmoothScroll";
+import { InkCursor } from "@/components/animations/InkCursor";
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from "@/lib/constants";
 import "./globals.css";
 
@@ -65,6 +66,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-background text-foreground">
         <LoadingScreen />
+        <InkCursor />
         <SmoothScroll>
           <Navbar />
           <main className="flex-1 pt-16">{children}</main>
