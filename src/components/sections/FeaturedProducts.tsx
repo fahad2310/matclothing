@@ -1,54 +1,65 @@
-"use client";
-
 import Link from "next/link";
 import { getFeaturedProducts } from "@/services/productService";
 import { ProductCard } from "@/components/ui/ProductCard";
 import { ScrollReveal } from "@/components/animations/ScrollReveal";
 import { TextReveal } from "@/components/animations/TextReveal";
 import { StaggerChildren } from "@/components/animations/StaggerChildren";
+import { SpecEyebrow } from "@/components/ui/SpecLabel";
 
-export function FeaturedProducts() {
-  const featured = getFeaturedProducts().slice(0, 6);
+/**
+ * Server component — the catalogue now comes from Postgres, so this reads
+ * it directly rather than shipping the query to the browser. The reveal
+ * wrappers stay client-side underneath.
+ */
+export async function FeaturedProducts() {
+  const featured = (await getFeaturedProducts()).slice(0, 6);
+
+  if (featured.length === 0) return null;
 
   return (
-    <section className="relative mx-auto max-w-7xl px-6 py-24">
-      {/* Background accent glow */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[500px] w-[500px] rounded-full bg-accent/[0.03] blur-[150px] pointer-events-none" />
-
-      <div className="relative mb-12 flex items-end justify-between">
-        <div>
-          <ScrollReveal>
-            <p className="text-[10px] tracking-[0.5em] uppercase text-accent mb-3">
-              Curated Selection
-            </p>
-          </ScrollReveal>
-          <TextReveal className="text-4xl font-bold tracking-wider text-foreground md:text-5xl">
-            Featured
-          </TextReveal>
-        </div>
-        <ScrollReveal direction="left">
-          <Link
-            href="/shop"
-            className="group flex items-center gap-2 text-xs tracking-wider uppercase text-muted transition-colors hover:text-accent"
-          >
-            View All
-            <svg className="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={1.5}>
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
-          </Link>
-        </ScrollReveal>
-      </div>
-
-      <StaggerChildren
-        className="relative grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3"
-        stagger={0.12}
-      >
-        {featured.map((product) => (
-          <div key={product.id}>
-            <ProductCard product={product} />
+    <section className="border-b border-border">
+      <div className="mx-auto max-w-[1400px] px-6 py-24 lg:px-12 lg:py-32">
+        <div className="mb-14 flex items-end justify-between gap-6">
+          <div>
+            <ScrollReveal>
+              <SpecEyebrow>Selected pieces</SpecEyebrow>
+            </ScrollReveal>
+            <TextReveal className="font-display mt-6 text-[clamp(2.25rem,4.5vw,3.75rem)] leading-none text-foreground">
+              Featured
+            </TextReveal>
           </div>
-        ))}
-      </StaggerChildren>
+
+          <ScrollReveal direction="left">
+            <Link
+              href="/shop"
+              className="group flex items-center gap-2 whitespace-nowrap pb-2 text-xs uppercase tracking-[0.18em] text-foreground transition-colors hover:text-accent"
+            >
+              See everything
+              <svg
+                aria-hidden
+                className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+              >
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </Link>
+          </ScrollReveal>
+        </div>
+
+        <StaggerChildren
+          className="grid grid-cols-1 gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-3"
+          stagger={0.1}
+        >
+          {featured.map((product) => (
+            <div key={product.id}>
+              <ProductCard product={product} />
+            </div>
+          ))}
+        </StaggerChildren>
+      </div>
     </section>
   );
 }

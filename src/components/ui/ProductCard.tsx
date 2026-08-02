@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import type { Product } from "@/types/product";
 import { formatPrice } from "@/lib/utils";
-import { isProductSoldOut } from "@/services/productService";
+import { isProductSoldOut } from "@/lib/stock";
 import { Badge } from "./Badge";
 import { SpecLabel, productSpecRows } from "./SpecLabel";
 

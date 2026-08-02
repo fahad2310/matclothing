@@ -1,112 +1,192 @@
 import Link from "next/link";
-import { getAllProducts } from "@/services/productService";
+import Image from "next/image";
+import { getAllProductsForAdmin } from "@/services/productService";
+import { totalStock } from "@/lib/stock";
+import { hasDb } from "@/db";
+import { formatPrice } from "@/lib/utils";
+import { SpecEyebrow } from "@/components/ui/SpecLabel";
+import { CATEGORIES } from "@/lib/constants";
 
-export default function AdminDashboard() {
-  const products = getAllProducts();
-  const clothing = products.filter((p) => p.category === "clothing");
-  const watches = products.filter((p) => p.category === "watches");
-  const shoes = products.filter((p) => p.category === "shoes");
-  const featured = products.filter((p) => p.featured);
+/** Stock below this shows as low so it can be restocked before it sells out. */
+const LOW_STOCK = 5;
+
+export default async function AdminDashboard() {
+  if (!hasDb()) return <NotProvisioned />;
+
+  const products = await getAllProductsForAdmin();
+  const live = products.filter((p) => totalStock(p) > 0);
+  const soldOut = products.filter((p) => totalStock(p) === 0);
+  const lowStock = products.filter((p) => {
+    const s = totalStock(p);
+    return s > 0 && s <= LOW_STOCK;
+  });
 
   const stats = [
-    { label: "Total Products", value: products.length, icon: "📦" },
-    { label: "Clothing", value: clothing.length, icon: "👕" },
-    { label: "Watches", value: watches.length, icon: "⌚" },
-    { label: "Shoes", value: shoes.length, icon: "👟" },
-    { label: "Featured", value: featured.length, icon: "⭐" },
+    { label: "Pieces", value: products.length },
+    { label: "In stock", value: live.length },
+    { label: "Low stock", value: lowStock.length },
+    { label: "Sold out", value: soldOut.length },
+    { label: "Featured", value: products.filter((p) => p.featured).length },
   ];
 
   return (
     <div>
-      <div className="mb-8 flex items-center justify-between">
+      <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-wider text-foreground">
-            Dashboard
+          <SpecEyebrow>Dashboard</SpecEyebrow>
+          <h1 className="font-display mt-4 text-4xl text-foreground">
+            Your catalogue
           </h1>
-          <p className="mt-1 text-sm text-muted">
-            Manage your Brand Industrys catalogue
-          </p>
         </div>
         <Link
           href="/admin/products/new"
-          className="bg-accent px-4 py-2 text-sm font-medium tracking-wider uppercase text-background transition-colors hover:bg-accent-hover"
+          className="bg-foreground px-6 py-3 text-xs uppercase tracking-[0.18em] text-background transition-colors hover:bg-accent-hover"
         >
-          Add Product
+          Add a piece
         </Link>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
+      <dl className="grid grid-cols-2 border border-border md:grid-cols-5">
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="bg-surface border border-border p-4"
+            className="border-b border-r border-border p-5 last:border-r-0 md:border-b-0"
           >
-            <div className="text-2xl mb-2">{stat.icon}</div>
-            <p className="text-2xl font-bold text-foreground">{stat.value}</p>
-            <p className="text-xs text-muted mt-1">{stat.label}</p>
+            <dt className="spec-label">{stat.label}</dt>
+            <dd className="font-display mt-2 text-4xl tabular-nums text-foreground">
+              {stat.value}
+            </dd>
           </div>
         ))}
-      </div>
+      </dl>
 
-      {/* Recent Products */}
-      <div className="mt-8">
-        <h2 className="text-lg font-bold tracking-wider text-foreground mb-4">
-          Recent Products
-        </h2>
-        <div className="border border-border">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-border bg-surface">
-                <th className="px-4 py-3 text-left text-xs uppercase tracking-wider text-muted">
-                  Name
-                </th>
-                <th className="px-4 py-3 text-left text-xs uppercase tracking-wider text-muted">
-                  Category
-                </th>
-                <th className="px-4 py-3 text-left text-xs uppercase tracking-wider text-muted">
-                  Price
-                </th>
-                <th className="px-4 py-3 text-left text-xs uppercase tracking-wider text-muted">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.slice(0, 5).map((product) => (
-                <tr
-                  key={product.id}
-                  className="border-b border-border last:border-0"
-                >
-                  <td className="px-4 py-3 text-sm text-foreground">
-                    {product.name}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-muted capitalize">
-                    {product.category}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-foreground">
-                    {product.currency} {product.price.toLocaleString()}
-                  </td>
-                  <td className="px-4 py-3">
+      {lowStock.length > 0 && (
+        <div className="mt-6 border-l-2 border-l-accent-soft bg-label px-5 py-4">
+          <p className="spec-label">Running low</p>
+          <p className="mt-2 text-sm text-foreground">
+            {lowStock.map((p) => p.name).join(", ")} —{" "}
+            {lowStock.length === 1 ? "this piece has" : "these have"} {LOW_STOCK}{" "}
+            units or fewer left.
+          </p>
+        </div>
+      )}
+
+      <div className="mt-12">
+        <div className="mb-5 flex items-end justify-between">
+          <h2 className="font-display text-2xl text-foreground">
+            Recently added
+          </h2>
+          <Link
+            href="/admin/products"
+            className="spec-label transition-colors hover:text-foreground"
+          >
+            Manage all →
+          </Link>
+        </div>
+
+        {products.length === 0 ? (
+          <EmptyCatalogue />
+        ) : (
+          <ul className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+            {products
+              .slice()
+              .reverse()
+              .slice(0, 5)
+              .map((product) => {
+                const cover = product.variants[0]?.images?.[0];
+                const stock = totalStock(product);
+                return (
+                  <li key={product.id}>
                     <Link
                       href={`/admin/products/${product.id}/edit`}
-                      className="text-xs text-accent hover:underline"
+                      className="group block"
                     >
-                      Edit
+                      <div className="relative aspect-square overflow-hidden border border-border bg-surface">
+                        {cover ? (
+                          <Image
+                            src={cover}
+                            alt=""
+                            fill
+                            sizes="240px"
+                            className="object-cover"
+                          />
+                        ) : (
+                          <span className="spec-label absolute inset-0 flex items-center justify-center">
+                            No photo
+                          </span>
+                        )}
+                        {stock === 0 && (
+                          <span className="spec-label absolute left-2 top-2 border border-border bg-background px-1.5 py-0.5">
+                            Sold out
+                          </span>
+                        )}
+                      </div>
+                      <p className="mt-2 truncate text-sm text-foreground transition-colors group-hover:text-accent">
+                        {product.name}
+                      </p>
+                      <p className="spec-label mt-0.5">
+                        {formatPrice(product.price, product.currency)} ·{" "}
+                        {stock} left
+                      </p>
                     </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <Link
-          href="/admin/products"
-          className="mt-4 inline-block text-xs text-muted hover:text-accent transition-colors"
-        >
-          View all products →
-        </Link>
+                  </li>
+                );
+              })}
+          </ul>
+        )}
       </div>
+
+      <div className="mt-12 grid gap-4 sm:grid-cols-3">
+        {CATEGORIES.map((c) => {
+          const count = products.filter((p) => p.category === c.slug).length;
+          return (
+            <Link
+              key={c.slug}
+              href={`/admin/products?category=${c.slug}`}
+              className="border border-border p-5 transition-colors hover:border-foreground"
+            >
+              <p className="spec-label">{c.label}</p>
+              <p className="font-display mt-2 text-3xl tabular-nums text-foreground">
+                {count}
+              </p>
+            </Link>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function EmptyCatalogue() {
+  return (
+    <div className="border border-dashed border-border bg-surface px-6 py-16 text-center">
+      <p className="font-display text-2xl text-foreground">No pieces yet</p>
+      <p className="mx-auto mt-2 max-w-sm text-sm text-muted">
+        Add your first piece — you can upload several photos at once and set
+        stock per size.
+      </p>
+      <Link
+        href="/admin/products/new"
+        className="mt-6 inline-block bg-foreground px-6 py-3 text-xs uppercase tracking-[0.18em] text-background"
+      >
+        Add a piece
+      </Link>
+    </div>
+  );
+}
+
+function NotProvisioned() {
+  return (
+    <div className="border-l-2 border-l-accent-soft bg-label px-6 py-6">
+      <p className="spec-label">Database not connected</p>
+      <p className="mt-3 max-w-lg text-sm text-foreground">
+        DATABASE_URL is not set, so the catalogue cannot load. Provision Neon
+        from the Vercel Marketplace, then run{" "}
+        <code className="bg-surface-2 px-1.5 py-0.5">
+          vercel env pull .env.local
+        </code>{" "}
+        and restart the dev server.
+      </p>
     </div>
   );
 }

@@ -10,13 +10,18 @@ export interface ProductColor {
   hex: string;
 }
 
+export interface ProductSizeStock {
+  size: ProductSize;
+  /** Units on hand. The single source of truth for availability. */
+  quantity: number;
+  /** Derived from quantity — never stored separately. */
+  inStock: boolean;
+}
+
 export interface ProductVariant {
   id: string;
   color: ProductColor;
-  sizes: {
-    size: ProductSize;
-    inStock: boolean;
-  }[];
+  sizes: ProductSizeStock[];
   images: string[];
 }
 
@@ -44,4 +49,7 @@ export interface Product {
   material?: string;
   weightGsm?: number;
   careInstructions?: string;
+
+  /** Hidden from the storefront but not deleted. Admin views only. */
+  archived?: boolean;
 }

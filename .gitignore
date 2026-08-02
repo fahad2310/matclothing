@@ -44,3 +44,7 @@ next-env.d.ts
 /test-results/
 /playwright-report/
 /blob-report/
+
+# Local dev database
+.env.local
+.env*.local

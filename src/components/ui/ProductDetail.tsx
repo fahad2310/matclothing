@@ -17,7 +17,7 @@ import { ProductCard } from "./ProductCard";
 import { MagneticButton } from "@/components/animations/MagneticButton";
 import { StaggerChildren } from "@/components/animations/StaggerChildren";
 import { ImageViewer } from "./ImageViewer";
-import { isProductSoldOut, isVariantSoldOut } from "@/services/productService";
+import { isProductSoldOut, isVariantSoldOut } from "@/lib/stock";
 
 interface ProductDetailProps {
   product: Product;

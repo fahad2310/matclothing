@@ -14,8 +14,8 @@ import { FOUNDED_YEAR, CATEGORIES, ORIGIN } from "@/lib/constants";
  * commerce page are a promise, so these are derived from real data or
  * dropped entirely.
  */
-export function BrandStory() {
-  const productCount = getAllProducts().length;
+export async function BrandStory() {
+  const productCount = (await getAllProducts()).length;
 
   const facts = [
     { term: "Established", value: String(FOUNDED_YEAR) },

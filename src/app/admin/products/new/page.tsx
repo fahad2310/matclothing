@@ -1,14 +1,17 @@
+import { SpecEyebrow } from "@/components/ui/SpecLabel";
 import { ProductForm } from "../ProductForm";
 
 export default function NewProductPage() {
   return (
     <div>
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-wider text-foreground">
-          Add Product
+      <div className="mb-8">
+        <SpecEyebrow>New piece</SpecEyebrow>
+        <h1 className="font-display mt-4 text-4xl text-foreground">
+          Add to the catalogue
         </h1>
-        <p className="text-sm text-muted">
-          Create a new product listing
+        <p className="mt-2 max-w-md text-sm text-muted">
+          Upload several photos at once and set stock per size. You can add
+          more colourways below.
         </p>
       </div>
 

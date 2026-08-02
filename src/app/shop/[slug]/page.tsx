@@ -7,8 +7,13 @@ import {
 } from "@/services/productService";
 import { ProductDetail } from "@/components/ui/ProductDetail";
 
-export function generateStaticParams() {
-  return getAllProducts().map((p) => ({ slug: p.slug }));
+export async function generateStaticParams() {
+  // Skipped when no database is configured — the build should not fail
+  // just because Neon has not been provisioned yet. Pages then render
+  // on demand instead of being prerendered.
+  if (!process.env.DATABASE_URL) return [];
+  const products = await getAllProducts();
+  return products.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata({
@@ -17,7 +22,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) return {};
   return {
     title: product.name,
@@ -31,10 +36,10 @@ export default async function ProductPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) notFound();
 
-  const relatedProducts = getRelatedProducts(product.id, 4);
+  const relatedProducts = await getRelatedProducts(product.id, 4);
 
   return <ProductDetail product={product} relatedProducts={relatedProducts} />;
 }

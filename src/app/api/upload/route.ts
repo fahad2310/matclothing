@@ -1,62 +1,56 @@
-import { NextRequest, NextResponse } from "next/server";
-import { writeFile, mkdir } from "fs/promises";
-import { join } from "path";
-import { existsSync } from "fs";
+import { handleUpload, type HandleUploadBody } from "@vercel/blob/client";
+import { NextResponse, type NextRequest } from "next/server";
+import { verifySession } from "@/lib/auth";
 
-const UPLOAD_DIR = join(process.cwd(), "public/images/products");
+/**
+ * Issues short-lived client-upload tokens for Vercel Blob.
+ *
+ * The previous implementation wrote to public/images/products with
+ * fs.writeFile, which cannot work on Vercel — the filesystem is read-only
+ * outside /tmp, and /tmp is per-instance and ephemeral.
+ *
+ * Uploading straight from the browser to Blob also sidesteps the 4.5 MB
+ * request body limit on serverless functions, so large product photos
+ * straight off a phone go through untouched.
+ */
 
-export async function POST(request: NextRequest) {
-  let formData: FormData;
+const ALLOWED = ["image/jpeg", "image/png", "image/webp", "image/avif"];
+const MAX_BYTES = 15 * 1024 * 1024;
+
+export async function POST(request: NextRequest): Promise<NextResponse> {
+  const body = (await request.json()) as HandleUploadBody;
+
   try {
-    formData = await request.formData();
-  } catch {
-    return NextResponse.json({ error: "No form data provided" }, { status: 400 });
+    const result = await handleUpload({
+      body,
+      request,
+      onBeforeGenerateToken: async () => {
+        // Tokens are what authorise the write, so the admin check belongs
+        // here — not on the upload itself, which never touches our server.
+        if (!(await verifySession())) {
+          throw new Error("Not authorised to upload");
+        }
+
+        return {
+          allowedContentTypes: ALLOWED,
+          maximumSizeInBytes: MAX_BYTES,
+          addRandomSuffix: true,
+          tokenPayload: JSON.stringify({ uploadedAt: Date.now() }),
+        };
+      },
+      onUploadCompleted: async ({ blob }) => {
+        // Fires from Blob's servers after the upload lands. The DB row is
+        // written by the admin form once the product is saved, so there is
+        // nothing to persist here — this is only useful for logging.
+        console.log("blob uploaded:", blob.pathname);
+      },
+    });
+
+    return NextResponse.json(result);
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Upload could not be authorised";
+    console.error("[api/upload] token generation failed:", message);
+    return NextResponse.json({ error: message }, { status: 400 });
   }
-
-  const file = formData.get("file") as File | null;
-
-  if (!file) {
-    return NextResponse.json({ error: "No file provided" }, { status: 400 });
-  }
-
-  // Validate file type
-  const allowedTypes = ["image/jpeg", "image/png", "image/webp", "image/avif"];
-  if (!allowedTypes.includes(file.type)) {
-    return NextResponse.json(
-      { error: "Invalid file type. Use JPG, PNG, or WebP." },
-      { status: 400 },
-    );
-  }
-
-  // Validate file size (max 5MB)
-  if (file.size > 5 * 1024 * 1024) {
-    return NextResponse.json(
-      { error: "File too large. Max 5MB." },
-      { status: 400 },
-    );
-  }
-
-  // Ensure upload directory exists
-  if (!existsSync(UPLOAD_DIR)) {
-    await mkdir(UPLOAD_DIR, { recursive: true });
-  }
-
-  // Generate unique filename
-  const ext = file.name.split(".").pop() || "jpg";
-  const timestamp = Date.now();
-  const safeName = file.name
-    .replace(/\.[^.]+$/, "")
-    .replace(/[^a-zA-Z0-9-_]/g, "-")
-    .toLowerCase();
-  const filename = `${safeName}-${timestamp}.${ext}`;
-
-  // Write file
-  const bytes = await file.arrayBuffer();
-  const buffer = Buffer.from(bytes);
-  const filepath = join(UPLOAD_DIR, filename);
-  await writeFile(filepath, buffer);
-
-  const publicPath = `/images/products/${filename}`;
-
-  return NextResponse.json({ path: publicPath, filename });
 }

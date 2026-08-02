@@ -1,54 +1,171 @@
-import { products } from "@/data/products";
-import type { Product, ProductCategory } from "@/types/product";
+import { cache } from "react";
+import { asc, eq, isNull, and } from "drizzle-orm";
+import { getDb, hasDb, schema } from "@/db";
+import type { Product, ProductCategory, ProductSize } from "@/types/product";
 
-export function getAllProducts(): Product[] {
-  return products;
+/**
+ * The only module that knows the catalogue lives in Postgres.
+ *
+ * Rows are mapped back to the Product domain type the storefront already
+ * uses, so components did not change when the JSON file went away. Prices
+ * are stored in paise and surfaced in rupees — the boundary is here and
+ * nowhere else.
+ */
+
+type Row = typeof schema.products.$inferSelect & {
+  variants: (typeof schema.variants.$inferSelect & {
+    images: (typeof schema.variantImages.$inferSelect)[];
+    sizes: (typeof schema.variantSizes.$inferSelect)[];
+  })[];
+};
+
+/** Sizes are stored as text so "M", "42" and "40mm" share a column. */
+function parseSize(raw: string): ProductSize {
+  const n = Number(raw);
+  return Number.isFinite(n) && raw.trim() !== "" ? n : (raw as ProductSize);
 }
 
-export function getProductBySlug(slug: string): Product | undefined {
-  return products.find((p) => p.slug === slug);
+function toProduct(row: Row): Product {
+  return {
+    id: row.id,
+    slug: row.slug,
+    name: row.name,
+    description: row.description,
+    longDescription: row.longDescription ?? undefined,
+    category: row.category as ProductCategory,
+    price: row.pricePaise / 100,
+    originalPrice:
+      row.originalPricePaise != null ? row.originalPricePaise / 100 : undefined,
+    currency: row.currency,
+    defaultVariantId: row.defaultVariantId ?? row.variants[0]?.id ?? "",
+    modelPath: row.modelPath ?? undefined,
+    tags: row.tags ?? [],
+    featured: row.featured,
+    material: row.material ?? undefined,
+    weightGsm: row.weightGsm ?? undefined,
+    careInstructions: row.careInstructions ?? undefined,
+    archived: row.archivedAt != null,
+    createdAt:
+      row.createdAt?.toISOString().split("T")[0] ??
+      new Date().toISOString().split("T")[0],
+    variants: row.variants.map((v) => ({
+      id: v.id,
+      color: { name: v.colorName, hex: v.colorHex },
+      images: v.images.map((i) => i.url),
+      sizes: v.sizes.map((s) => ({
+        size: parseSize(s.size),
+        quantity: s.quantity,
+        inStock: s.quantity > 0,
+      })),
+    })),
+  };
 }
 
-export function getProductById(id: string): Product | undefined {
-  return products.find((p) => p.id === id);
+const withChildren = {
+  variants: {
+    orderBy: asc(schema.variants.position),
+    with: {
+      images: { orderBy: asc(schema.variantImages.position) },
+      sizes: { orderBy: asc(schema.variantSizes.position) },
+    },
+  },
+} as const;
+
+/**
+ * cache() dedupes within a single request — one render that hits
+ * getAllProducts from three components issues one query, not three.
+ */
+export const getAllProducts = cache(async (): Promise<Product[]> => {
+  // An unprovisioned database yields an empty catalogue rather than a
+  // crash. The first Vercel build runs before Neon exists, and failing
+  // there would block the very deploy that lets you provision it.
+  if (!hasDb()) return [];
+
+  const rows = await getDb().query.products.findMany({
+    where: isNull(schema.products.archivedAt),
+    orderBy: asc(schema.products.createdAt),
+    with: withChildren,
+  });
+  return (rows as Row[]).map(toProduct);
+});
+
+/** Includes archived products. Admin only. */
+export const getAllProductsForAdmin = cache(async (): Promise<Product[]> => {
+  if (!hasDb()) return [];
+
+  const rows = await getDb().query.products.findMany({
+    orderBy: asc(schema.products.createdAt),
+    with: withChildren,
+  });
+  return (rows as Row[]).map(toProduct);
+});
+
+export const getProductBySlug = cache(
+  async (slug: string): Promise<Product | undefined> => {
+    if (!hasDb()) return undefined;
+
+    const row = await getDb().query.products.findFirst({
+      where: and(
+        eq(schema.products.slug, slug),
+        isNull(schema.products.archivedAt),
+      ),
+      with: withChildren,
+    });
+    return row ? toProduct(row as Row) : undefined;
+  },
+);
+
+export const getProductById = cache(
+  async (id: string): Promise<Product | undefined> => {
+    if (!hasDb()) return undefined;
+
+    const row = await getDb().query.products.findFirst({
+      where: eq(schema.products.id, id),
+      with: withChildren,
+    });
+    return row ? toProduct(row as Row) : undefined;
+  },
+);
+
+export async function getProductsByCategory(
+  category: ProductCategory,
+): Promise<Product[]> {
+  const all = await getAllProducts();
+  return all.filter((p) => p.category === category);
 }
 
-export function getProductsByCategory(category: ProductCategory): Product[] {
-  return products.filter((p) => p.category === category);
+export async function getFeaturedProducts(): Promise<Product[]> {
+  const all = await getAllProducts();
+  return all.filter((p) => p.featured);
 }
 
-export function getFeaturedProducts(): Product[] {
-  return products.filter((p) => p.featured);
-}
-
-export function searchProducts(query: string): Product[] {
+export async function searchProducts(query: string): Promise<Product[]> {
   const lower = query.toLowerCase();
-  return products.filter(
+  const all = await getAllProducts();
+  return all.filter(
     (p) =>
       p.name.toLowerCase().includes(lower) ||
       p.description.toLowerCase().includes(lower) ||
-      p.tags.some((t) => t.includes(lower)),
+      p.tags.some((t) => t.toLowerCase().includes(lower)),
   );
 }
 
-export function getRelatedProducts(productId: string, limit = 4): Product[] {
-  const product = getProductById(productId);
+export async function getRelatedProducts(
+  productId: string,
+  limit = 4,
+): Promise<Product[]> {
+  const all = await getAllProducts();
+  const product = all.find((p) => p.id === productId);
   if (!product) return [];
-  return products
+  return all
     .filter((p) => p.id !== productId && p.category === product.category)
     .slice(0, limit);
 }
 
-/** Check if a product is completely sold out (no sizes in stock across all variants) */
-export function isProductSoldOut(product: Product): boolean {
-  return product.variants.every((v) =>
-    v.sizes.every((s) => !s.inStock),
-  );
-}
-
-/** Check if a specific variant is sold out */
-export function isVariantSoldOut(product: Product, variantId: string): boolean {
-  const variant = product.variants.find((v) => v.id === variantId);
-  if (!variant) return true;
-  return variant.sizes.every((s) => !s.inStock);
-}
+// Pure stock predicates live in @/lib/stock — importing them from here
+// would pull the database driver into client bundles.
+export {
+  isProductSoldOut,
+  isVariantSoldOut,
+  totalStock,
+} from "@/lib/stock";
