@@ -1,4 +1,10 @@
 import { defineConfig, devices } from "@playwright/test";
+import { config as loadEnv } from "dotenv";
+
+// Next loads .env.local for the dev server, but the test runner is a
+// separate process. Without this the admin specs sign in with a stale
+// default password while the server expects the real one.
+loadEnv({ path: ".env.local", quiet: true });
 
 export default defineConfig({
   testDir: "./tests",

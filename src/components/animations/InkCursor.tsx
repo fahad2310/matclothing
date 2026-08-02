@@ -7,11 +7,14 @@ import { useEffect, useRef } from "react";
  *
  * The dark theme had gold sparkles with additive blending — light added to
  * black. Paper has no light to add, so the same gesture is made with the
- * opposite material: fine graphite specks that fall, fade and settle, plus
- * a ring that lags the pointer and opens over anything clickable.
+ * opposite material: fine graphite specks that fall, fade and settle.
  *
- * One canvas and one rAF loop for the whole effect. Pointer state is kept
- * in refs so moving the mouse never triggers a React render.
+ * The lagging ring that used to follow the pointer is gone. It read as a
+ * widget chasing the mouse rather than as ink, and the system cursor is
+ * left visible so nothing feels laggy or lost.
+ *
+ * One canvas and one rAF loop. Pointer state lives in refs so moving the
+ * mouse never triggers a React render.
  */
 
 interface Speck {
@@ -30,15 +33,10 @@ const TONES = ["#14110e", "#3a332b", "#6e6153", "#8a7b68"];
 
 export function InkCursor() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const ringRef = useRef<HTMLDivElement>(null);
-  const dotRef = useRef<HTMLDivElement>(null);
 
   const pointer = useRef({ x: -100, y: -100 });
-  const ring = useRef({ x: -100, y: -100 });
   const specks = useRef<Speck[]>([]);
   const lastEmit = useRef({ x: -100, y: -100 });
-  const hovering = useRef(false);
-  const visible = useRef(false);
 
   useEffect(() => {
     // Touch devices have no hover, and a trail chasing taps looks broken.
@@ -87,7 +85,6 @@ export function InkCursor() {
 
     function onMove(e: PointerEvent) {
       pointer.current = { x: e.clientX, y: e.clientY };
-      visible.current = true;
 
       const dx = e.clientX - lastEmit.current.x;
       const dy = e.clientY - lastEmit.current.y;
@@ -99,15 +96,6 @@ export function InkCursor() {
         emit(e.clientX, e.clientY, travelled > 45 ? 3 : 1);
         lastEmit.current = { x: e.clientX, y: e.clientY };
       }
-
-      const el = document.elementFromPoint(e.clientX, e.clientY);
-      hovering.current = Boolean(
-        el?.closest('a, button, input, select, textarea, [role="button"]'),
-      );
-    }
-
-    function onLeave() {
-      visible.current = false;
     }
 
     function frame() {
@@ -133,35 +121,16 @@ export function InkCursor() {
       });
       ctx.globalAlpha = 1;
 
-      // Ring eases toward the pointer; the dot tracks it exactly. The gap
-      // between them is what reads as weight.
-      ring.current.x += (pointer.current.x - ring.current.x) * 0.14;
-      ring.current.y += (pointer.current.y - ring.current.y) * 0.14;
-
-      const scale = hovering.current ? 2.1 : 1;
-      const opacity = visible.current ? (hovering.current ? 0.55 : 0.32) : 0;
-
-      if (ringRef.current) {
-        ringRef.current.style.transform = `translate3d(${ring.current.x - 18}px, ${ring.current.y - 18}px, 0) scale(${scale})`;
-        ringRef.current.style.opacity = String(opacity);
-      }
-      if (dotRef.current) {
-        dotRef.current.style.transform = `translate3d(${pointer.current.x - 2}px, ${pointer.current.y - 2}px, 0)`;
-        dotRef.current.style.opacity = visible.current && !hovering.current ? "1" : "0";
-      }
-
       raf = requestAnimationFrame(frame);
     }
     raf = requestAnimationFrame(frame);
 
     window.addEventListener("pointermove", onMove, { passive: true });
-    document.addEventListener("pointerleave", onLeave);
     window.addEventListener("resize", resize);
 
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener("pointermove", onMove);
-      document.removeEventListener("pointerleave", onLeave);
       window.removeEventListener("resize", resize);
     };
   }, []);
@@ -169,16 +138,6 @@ export function InkCursor() {
   return (
     <div aria-hidden className="pointer-events-none fixed inset-0 z-[9998]">
       <canvas ref={canvasRef} className="h-full w-full" />
-      <div
-        ref={ringRef}
-        className="fixed left-0 top-0 h-9 w-9 rounded-full border border-foreground opacity-0 will-change-transform"
-        style={{ transition: "opacity 260ms ease, transform 120ms ease-out" }}
-      />
-      <div
-        ref={dotRef}
-        className="fixed left-0 top-0 h-1 w-1 rounded-full bg-foreground opacity-0 will-change-transform"
-        style={{ transition: "opacity 200ms ease" }}
-      />
     </div>
   );
 }

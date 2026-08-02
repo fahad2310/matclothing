@@ -3,17 +3,18 @@
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
 import { MagneticButton } from "@/components/animations/MagneticButton";
-import { HeroScene } from "@/components/three/HeroScene";
+import type { Product } from "@/types/product";
+import { HeroShowcase } from "./HeroShowcase";
 import { SpecEyebrow } from "@/components/ui/SpecLabel";
 import { Wordmark } from "@/components/ui/Wordmark";
 import { SITE_TAGLINE, SEASON, FOUNDED_YEAR } from "@/lib/constants";
 
 /**
- * Asymmetric editorial hero: the wordmark holds the left column, the 3D
- * study sits in the right. Deliberately not a centred stack over a
+ * Asymmetric editorial hero: the wordmark holds the left column, real
+ * stock cycles in the right. Deliberately not a centred stack over a
  * full-bleed canvas — on paper, the margin is the luxury.
  */
-export function HeroSection() {
+export function HeroSection({ products }: { products: Product[] }) {
   const reduceMotion = useReducedMotion();
 
   // One orchestrated entrance rather than scattered per-element effects.
@@ -118,14 +119,14 @@ export function HeroSection() {
           </motion.div>
         </div>
 
-        {/* Right — the 3D study, framed and captioned like a lookbook plate */}
+        {/* Right — real stock, framed like a lookbook plate */}
         <motion.div
           initial={reduceMotion ? undefined : { opacity: 0, scale: 0.97 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.5, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
           className="relative order-1 aspect-[4/5] w-full border border-border bg-surface lg:order-2 lg:aspect-auto lg:h-[78vh]"
         >
-          <HeroScene className="h-full w-full" />
+          <HeroShowcase products={products} />
 
           {/* Corner registration marks — printer's crop, not decoration */}
           {(
@@ -142,11 +143,6 @@ export function HeroSection() {
               className={`absolute h-5 w-5 border-foreground/45 ${pos}`}
             />
           ))}
-
-          <div className="absolute inset-x-0 bottom-0 flex items-center justify-between border-t border-border bg-background/80 px-4 py-2.5 backdrop-blur-sm">
-            <span className="spec-label">Plate 01 — Study</span>
-            <span className="spec-label">{SEASON}</span>
-          </div>
         </motion.div>
       </div>
 

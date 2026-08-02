@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!--
+    Favicon monogram.
+
+    The full wordmark is unreadable at 16px, so it reduces to its two
+    registers instead: the italic serif "b" of "brand" against the heavy
+    grotesk "i" of "industrys". That serif/sans collision is the logo's
+    actual idea, and it survives the size where the letterforms do not.
+
+    Ink on warm paper, matching the site tokens.
+  -->
+  <rect width="64" height="64" fill="#faf8f4"/>
+  <text x="9" y="45"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-style="italic" font-size="40" fill="#14110e">b</text>
+  <text x="30" y="45"
+        font-family="Helvetica, Arial, sans-serif"
+        font-weight="800" font-size="38" fill="#14110e"
+        letter-spacing="-1">i</text>
+</svg>
