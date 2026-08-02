@@ -1,5 +1,6 @@
 import { SpecEyebrow } from "@/components/ui/SpecLabel";
 import { ProductForm } from "../ProductForm";
+import { getUploadMode } from "@/lib/storage";
 
 export default function NewProductPage() {
   return (
@@ -15,7 +16,7 @@ export default function NewProductPage() {
         </p>
       </div>
 
-      <ProductForm mode="create" />
+      <ProductForm mode="create" uploadMode={getUploadMode()} />
     </div>
   );
 }

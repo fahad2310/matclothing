@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import type { Product } from "@/types/product";
 import { cn } from "@/lib/utils";
 import { CATEGORIES } from "@/lib/constants";
-import { ImageUpload } from "./ImageUpload";
+import { ImageUpload, type UploadMode } from "./ImageUpload";
 import { saveProduct, type ProductInput, type VariantInput } from "../actions";
 
 /**
@@ -50,9 +50,11 @@ function toVariantInputs(product: Product): VariantInput[] {
 interface ProductFormProps {
   initialData?: Product;
   mode: "create" | "edit";
+  /** Which storage backend the server has configured. */
+  uploadMode: UploadMode;
 }
 
-export function ProductForm({ initialData, mode }: ProductFormProps) {
+export function ProductForm({ initialData, mode, uploadMode }: ProductFormProps) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -318,6 +320,7 @@ export function ProductForm({ initialData, mode }: ProductFormProps) {
                 images={variant.images}
                 onChange={(images) => updateVariant(vi, { images })}
                 label={`${name} — ${variant.colorName}`}
+                mode={uploadMode}
               />
             </div>
 

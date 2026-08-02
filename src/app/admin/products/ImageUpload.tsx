@@ -9,13 +9,17 @@ import type { ImageInput } from "../actions";
 /**
  * Multi-image uploader.
  *
- * Files go straight from the browser to Vercel Blob using a short-lived
- * token from /api/upload, so nothing streams through a serverless function
- * and the 4.5 MB body limit does not apply — phone photos upload as-is.
+ * Two paths, chosen by what the server has configured. With Vercel Blob,
+ * files go browser-to-Blob with a short-lived token, so nothing streams
+ * through a function and large phone photos are fine. Without it, the file
+ * is posted here and written to disk — that keeps a local clone working
+ * with no cloud account.
  *
- * Uploads run in parallel and each tile tracks its own progress, so one
- * slow file never blocks the rest.
+ * Uploads run in parallel and each tile owns its progress, so one slow
+ * file never blocks the rest.
  */
+
+export type UploadMode = "blob" | "local";
 
 interface PendingUpload {
   key: string;
@@ -30,9 +34,15 @@ interface ImageUploadProps {
   onChange: (images: ImageInput[]) => void;
   /** Used as alt text for uploaded photos. */
   label?: string;
+  mode?: UploadMode;
 }
 
-export function ImageUpload({ images, onChange, label }: ImageUploadProps) {
+export function ImageUpload({
+  images,
+  onChange,
+  label,
+  mode = "local",
+}: ImageUploadProps) {
   const [pending, setPending] = useState<PendingUpload[]>([]);
   const [dragOver, setDragOver] = useState(false);
   const [dragIndex, setDragIndex] = useState<number | null>(null);
@@ -54,24 +64,40 @@ export function ImageUpload({ images, onChange, label }: ImageUploadProps) {
       const uploaded = await Promise.all(
         list.map(async (file, i) => {
           const key = started[i].key;
+          const setProgress = (percentage: number) =>
+            setPending((p) =>
+              p.map((u) => (u.key === key ? { ...u, progress: percentage } : u)),
+            );
+
           try {
-            const blob = await upload(`products/${file.name}`, file, {
-              access: "public",
-              handleUploadUrl: "/api/upload",
-              onUploadProgress: ({ percentage }) => {
-                setPending((p) =>
-                  p.map((u) =>
-                    u.key === key ? { ...u, progress: percentage } : u,
-                  ),
-                );
-              },
-            });
-            const image: ImageInput = {
-              url: blob.url,
-              blobPathname: blob.pathname,
+            if (mode === "blob") {
+              const blob = await upload(`products/${file.name}`, file, {
+                access: "public",
+                handleUploadUrl: "/api/upload",
+                onUploadProgress: ({ percentage }) => setProgress(percentage),
+              });
+              return {
+                url: blob.url,
+                blobPathname: blob.pathname,
+                alt: label ?? null,
+              } as ImageInput;
+            }
+
+            // Local backend: post the file itself. fetch gives no upload
+            // progress, so the bar jumps rather than creeps.
+            setProgress(35);
+            const body = new FormData();
+            body.append("file", file);
+            const res = await fetch("/api/upload", { method: "POST", body });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error ?? "Upload failed");
+            setProgress(100);
+
+            return {
+              url: data.url,
+              blobPathname: data.pathname,
               alt: label ?? null,
-            };
-            return image;
+            } as ImageInput;
           } catch (err) {
             const message = err instanceof Error ? err.message : "Upload failed";
             setPending((p) =>
@@ -94,7 +120,7 @@ export function ImageUpload({ images, onChange, label }: ImageUploadProps) {
         }),
       );
     },
-    [images, onChange, label],
+    [images, onChange, label, mode],
   );
 
   function removeAt(index: number) {

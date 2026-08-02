@@ -48,3 +48,6 @@ next-env.d.ts
 # Local dev database
 .env.local
 .env*.local
+
+# Locally uploaded product photos (dev storage backend)
+/public/uploads/

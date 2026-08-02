@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getProductById } from "@/services/productService";
 import { SpecEyebrow } from "@/components/ui/SpecLabel";
 import { ProductForm } from "../../ProductForm";
+import { getUploadMode } from "@/lib/storage";
 
 export default async function EditProductPage({
   params,
@@ -21,7 +22,7 @@ export default async function EditProductPage({
         </h1>
       </div>
 
-      <ProductForm initialData={product} mode="edit" />
+      <ProductForm initialData={product} mode="edit" uploadMode={getUploadMode()} />
     </div>
   );
 }
