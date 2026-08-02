@@ -1,21 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="1000" viewBox="0 0 800 1000">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="rgb(57,57,57)"/>
-      <stop offset="100%" stop-color="rgb(42,42,42)"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.6" y2="1">
+      <stop offset="0%" stop-color="#f2eee7"/>
+      <stop offset="100%" stop-color="#e8e2d8"/>
     </linearGradient>
-    <linearGradient id="accent" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#f5f5f5" stop-opacity="0.9"/>
-      <stop offset="100%" stop-color="#f5f5f5" stop-opacity="0.6"/>
-    </linearGradient>
+    <radialGradient id="pool" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#14110e" stop-opacity="0.10"/>
+      <stop offset="100%" stop-color="#14110e" stop-opacity="0"/>
+    </radialGradient>
   </defs>
-  <rect width="800" height="800" fill="url(#bg)"/>
-  <rect x="50" y="50" width="700" height="700" rx="8" fill="none" stroke="#f5f5f5" stroke-opacity="0.1" stroke-width="1"/>
-  <g transform="translate(400,350) scale(12)" stroke="#f5f5f5" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" fill="none" opacity="0.7">
+
+  <rect width="800" height="1000" fill="url(#bg)"/>
+
+  <!-- grounding shadow so the object sits on the page -->
+  <ellipse cx="400" cy="648" rx="190" ry="26" fill="url(#pool)"/>
+
+  <g transform="translate(400,430) scale(13)" stroke="#14110e" stroke-opacity="0.5"
+     stroke-width="1.1" stroke-linecap="round" stroke-linejoin="round" fill="none">
     <path d="M4 18 Q2 18 2 16 L2 12 Q2 10 4 10 L10 8 Q12 7 14 7 L20 7 Q22 7 22 9 L22 14 Q22 16 20 16 L18 16 Q16 18 14 18 Z M6 14 L8 14 M16 10 L18 10"/>
   </g>
-  <text x="400" y="560" text-anchor="middle" font-family="system-ui,sans-serif" font-size="28" font-weight="600" letter-spacing="6" fill="#f5f5f5" opacity="0.8">URBAN RUNNER X1</text>
-  <text x="400" y="595" text-anchor="middle" font-family="system-ui,sans-serif" font-size="16" letter-spacing="4" fill="#f5f5f5" opacity="0.4">WHITE</text>
-  <line x1="350" y1="620" x2="450" y2="620" stroke="#f5f5f5" stroke-opacity="0.15" stroke-width="1"/>
-  <text x="400" y="650" text-anchor="middle" font-family="system-ui,sans-serif" font-size="12" letter-spacing="8" fill="#c9a84c" opacity="0.5">MAT</text>
+
+  <!-- colour chip: the real product colour, shown as a swatch -->
+  <circle cx="400" cy="726" r="17" fill="#f5f5f5" stroke="#e2dcd2" stroke-width="1"/>
+
+  <text x="400" y="800" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,monospace"
+        font-size="19" letter-spacing="4.2" fill="#14110e" fill-opacity="0.82">URBAN RUNNER X1</text>
+  <text x="400" y="832" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,monospace"
+        font-size="14" letter-spacing="3.4" fill="#14110e" fill-opacity="0.45">WHITE</text>
+
+  <line x1="345" y1="872" x2="455" y2="872" stroke="#e2dcd2" stroke-width="1"/>
+
+  <text x="400" y="908" text-anchor="middle" font-family="ui-monospace,SFMono-Regular,monospace"
+        font-size="11" letter-spacing="6" fill="#8a7b68">BRAND INDUSTRYS</text>
 </svg>

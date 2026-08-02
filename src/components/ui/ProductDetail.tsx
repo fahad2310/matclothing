@@ -9,6 +9,7 @@ import { useCartStore } from "@/stores/cartStore";
 import { buildSingleProductMessage, getWhatsAppUrl } from "@/lib/whatsapp";
 import { getProductShareUrl, copyToClipboard } from "@/lib/sharing";
 import { Badge } from "./Badge";
+import { SpecLabel, productSpecRows } from "./SpecLabel";
 import { SizeSelector } from "./SizeSelector";
 import { ColorSelector } from "./ColorSelector";
 import { Button } from "./Button";
@@ -237,20 +238,15 @@ export function ProductDetail({ product, relatedProducts }: ProductDetailProps) 
             {copied ? "Link Copied!" : "Share Product"}
           </button>
 
-          {/* Extra info */}
-          <div className="border-t border-border pt-6 space-y-3">
-            <div className="flex justify-between text-xs text-muted">
-              <span>Category</span>
-              <span className="capitalize text-foreground">{product.category}</span>
-            </div>
-            {product.tags.length > 0 && (
-              <div className="flex justify-between text-xs text-muted">
-                <span>Tags</span>
-                <span className="capitalize text-foreground">
-                  {product.tags.join(", ")}
-                </span>
-              </div>
-            )}
+          {/* The care label — same tag that appears on cards and in the cart */}
+          <div className="border-t border-border pt-8">
+            <SpecLabel
+              rows={[
+                ...productSpecRows(product, selectedVariantId),
+                { term: "Category", value: product.category },
+              ]}
+              variant="stacked"
+            />
           </div>
         </motion.div>
       </div>

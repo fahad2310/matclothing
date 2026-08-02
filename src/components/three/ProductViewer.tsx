@@ -21,39 +21,41 @@ function LoadingProgress() {
   return (
     <Html center>
       <div className="flex flex-col items-center gap-2">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-[#c9a84c] border-t-transparent" />
-        <span className="text-xs text-[#888] font-mono">
-          {progress.toFixed(0)}%
-        </span>
+        <div className="h-6 w-6 animate-spin rounded-full border border-accent-soft border-t-transparent" />
+        <span className="spec-label">{progress.toFixed(0)}%</span>
       </div>
     </Html>
   );
 }
 
+/**
+ * Stand-in shown until a product has a real model. Matte and solid, not a
+ * gold wireframe — a wireframe on paper reads as unfinished scaffolding
+ * rather than as a placeholder.
+ */
 function PlaceholderGeometry({ category }: { category?: string }) {
   const meshRef = useRef<THREE.Mesh>(null);
-
-  // Rotate slowly
   const [hovered, setHovered] = useState(false);
 
   return (
     <mesh
       ref={meshRef}
+      castShadow
+      receiveShadow
       onPointerOver={() => setHovered(true)}
       onPointerOut={() => setHovered(false)}
     >
       {category === "watches" ? (
-        <torusGeometry args={[1, 0.3, 16, 32]} />
+        <torusGeometry args={[1, 0.3, 32, 96]} />
       ) : category === "shoes" ? (
         <boxGeometry args={[1.5, 0.6, 2]} />
       ) : (
         <boxGeometry args={[1.2, 1.6, 0.3]} />
       )}
       <meshStandardMaterial
-        color={hovered ? "#c9a84c" : "#2a2a2a"}
-        metalness={0.8}
-        roughness={0.2}
-        wireframe
+        color={hovered ? "#8a7b68" : "#e8e2d8"}
+        roughness={0.85}
+        metalness={0}
       />
     </mesh>
   );
@@ -80,7 +82,7 @@ function ProductScene({
         minDistance={2}
         maxDistance={8}
         autoRotate
-        autoRotateSpeed={1.5}
+        autoRotateSpeed={0.8}
         touches={{
           ONE: THREE.TOUCH.ROTATE,
           TWO: THREE.TOUCH.DOLLY_ROTATE,
@@ -110,10 +112,8 @@ export function ProductViewer({
   category,
 }: ProductViewerProps) {
   const defaultFallback = (
-    <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-surface to-surface-2">
-      <span className="text-8xl opacity-20">
-        {category === "shoes" ? "👟" : category === "watches" ? "⌚" : "👕"}
-      </span>
+    <div className="flex h-full w-full items-center justify-center bg-surface">
+      <span className="spec-label">No 3D view for this piece</span>
     </div>
   );
 
@@ -123,6 +123,7 @@ export function ProductViewer({
       fallback={fallback || defaultFallback}
       camera={{ position: [0, 0, 4], fov: 45 }}
       minTier="medium"
+      shadows
     >
       <ProductScene
         modelPath={modelPath}

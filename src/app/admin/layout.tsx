@@ -8,8 +8,8 @@ export default async function AdminLayout({
 }) {
   // Check if user is logged in to decide whether to show sidebar
   const cookieStore = await cookies();
-  const session = cookieStore.get("mat-admin-session");
-  const isLoggedIn = session?.value === "mat-authenticated";
+  const session = cookieStore.get("bi-admin-session");
+  const isLoggedIn = session?.value === "bi-authenticated";
 
   if (!isLoggedIn) {
     // Login page — no sidebar

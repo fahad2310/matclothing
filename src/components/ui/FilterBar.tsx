@@ -30,7 +30,7 @@ export function FilterBar({
             className={cn(
               "px-4 py-2 text-xs uppercase tracking-wider transition-all",
               selectedCategory === "all"
-                ? "bg-accent text-background"
+                ? "bg-foreground text-background"
                 : "text-muted hover:text-foreground",
             )}
           >
@@ -43,7 +43,7 @@ export function FilterBar({
               className={cn(
                 "px-4 py-2 text-xs uppercase tracking-wider transition-all",
                 selectedCategory === cat.slug
-                  ? "bg-accent text-background"
+                  ? "bg-foreground text-background"
                   : "text-muted hover:text-foreground",
               )}
             >

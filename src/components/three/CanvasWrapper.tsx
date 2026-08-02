@@ -20,6 +20,8 @@ interface CanvasWrapperProps {
     fov?: number;
   };
   frameloop?: "always" | "demand" | "never";
+  /** Enables shadow mapping. Needed for cast/receive shadows on light themes. */
+  shadows?: boolean;
 }
 
 function LoadingFallback() {
@@ -40,6 +42,7 @@ export function CanvasWrapper({
   minTier = "medium",
   camera = { position: [0, 0, 5], fov: 45 },
   frameloop = "always",
+  shadows = false,
 }: CanvasWrapperProps) {
   const { tier, hasWebGL } = useDeviceCapability();
 
@@ -70,6 +73,8 @@ export function CanvasWrapper({
         <Canvas
           camera={camera}
           frameloop={frameloop}
+          // "soft" maps to PCFSoftShadowMap, deprecated in three 0.183.
+          shadows={shadows && tier === "high"}
           dpr={[1, tier === "high" ? 2 : 1.5]}
           gl={{
             antialias: tier === "high",

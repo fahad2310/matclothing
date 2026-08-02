@@ -6,15 +6,20 @@ interface BadgeProps {
   className?: string;
 }
 
+/**
+ * Badges are stamps, not stickers — hairline outlines on label stock rather
+ * than filled chips. The one exception is "sale", which stays solid ink so
+ * the single commercially loud state is actually loud.
+ */
 export function Badge({ children, variant = "default", className }: BadgeProps) {
   return (
     <span
       className={cn(
-        "inline-block px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider",
+        "spec-label inline-block border px-2 py-1",
         {
-          "bg-surface-2 text-muted": variant === "default",
-          "bg-red-600 text-white": variant === "sale",
-          "bg-accent text-background": variant === "new",
+          "border-border bg-background text-muted": variant === "default",
+          "border-foreground bg-foreground text-background": variant === "sale",
+          "border-foreground bg-background text-foreground": variant === "new",
         },
         className,
       )}

@@ -1,72 +1,66 @@
 import Link from "next/link";
-import { SITE_NAME, NAV_LINKS, SOCIAL_LINKS } from "@/lib/constants";
+import {
+  SITE_NAME,
+  NAV_LINKS,
+  SOCIAL_LINKS,
+  ORIGIN,
+  FOUNDED_YEAR,
+} from "@/lib/constants";
+import { Wordmark } from "@/components/ui/Wordmark";
 
 export function Footer() {
   return (
-    <footer className="border-t border-border/50 bg-background">
-      <div className="mx-auto max-w-7xl px-6 py-16">
-        <div className="grid gap-12 md:grid-cols-3">
-          {/* Brand */}
+    <footer className="bg-background">
+      <div className="mx-auto max-w-[1400px] px-6 py-16 lg:px-12 lg:py-20">
+        <div className="grid gap-12 md:grid-cols-[1.5fr_1fr_1fr]">
           <div>
-            <h3 className="text-lg font-bold tracking-[0.3em] text-foreground">
-              {SITE_NAME.toUpperCase().replace(" CLOTHING", "")}
-            </h3>
-            <p className="mt-4 text-sm leading-relaxed text-muted">
-              Premium clothing, watches, and shoes crafted for the modern
-              individual. Elevate your style.
+            <Wordmark className="text-2xl text-foreground" />
+            <p className="mt-5 max-w-xs text-sm leading-relaxed text-muted">
+              Small-batch clothing, watches and shoes. {ORIGIN} since{" "}
+              {FOUNDED_YEAR}.
             </p>
           </div>
 
-          {/* Quick Links */}
           <div>
-            <h4 className="text-xs font-medium tracking-[0.2em] uppercase text-muted">
-              Quick Links
-            </h4>
-            <ul className="mt-4 space-y-3">
-              {NAV_LINKS.map((link) => (
+            <p className="spec-label">Pages</p>
+            <ul className="mt-5 space-y-3">
+              {[...NAV_LINKS, { label: "Cart", href: "/cart" }].map((link) => (
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="text-sm text-foreground/70 transition-colors hover:text-accent"
+                    className="text-sm text-foreground transition-colors duration-300 hover:text-accent"
                   >
                     {link.label}
                   </Link>
                 </li>
               ))}
-              <li>
-                <Link
-                  href="/cart"
-                  className="text-sm text-foreground/70 transition-colors hover:text-accent"
-                >
-                  Cart
-                </Link>
-              </li>
             </ul>
           </div>
 
-          {/* Socials */}
           <div>
-            <h4 className="text-xs font-medium tracking-[0.2em] uppercase text-muted">
-              Follow Us
-            </h4>
-            <div className="mt-4 flex gap-4">
+            <p className="spec-label">Elsewhere</p>
+            <ul className="mt-5 space-y-3">
               {Object.entries(SOCIAL_LINKS).map(([name, href]) => (
-                <a
-                  key={name}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm capitalize text-foreground/70 transition-colors hover:text-accent"
-                >
-                  {name}
-                </a>
+                <li key={name}>
+                  <a
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm capitalize text-foreground transition-colors duration-300 hover:text-accent"
+                  >
+                    {name}
+                  </a>
+                </li>
               ))}
-            </div>
+            </ul>
           </div>
         </div>
 
-        <div className="mt-12 border-t border-border/50 pt-8 text-center text-xs text-muted">
-          &copy; {new Date().getFullYear()} {SITE_NAME}. All rights reserved.
+        <div className="mt-16 flex flex-col gap-2 border-t border-border pt-8 sm:flex-row sm:items-center sm:justify-between">
+          <p className="spec-label">
+            &copy; {new Date().getFullYear()} {SITE_NAME}. All rights reserved.
+          </p>
+          <p className="spec-label">{ORIGIN}</p>
         </div>
       </div>
     </footer>

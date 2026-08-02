@@ -20,7 +20,7 @@ export function buildSingleProductMessage(
   const url = getProductUrl(product, variantId, size);
 
   return [
-    `Hi! I'd like to order from MAT Clothing:`,
+    `Hi! I'd like to order from Brand Industrys:`,
     ``,
     `${product.name} — Size ${size}, ${colorName} — ${formatPrice(product.price, product.currency)}`,
     `🔗 ${url}`,
@@ -31,7 +31,7 @@ export function buildCartMessage(
   items: CartItem[],
   products: Product[],
 ) {
-  const lines: string[] = ["Hi! I'd like to order from MAT Clothing:", ""];
+  const lines: string[] = ["Hi! I'd like to order from Brand Industrys:", ""];
 
   let total = 0;
 

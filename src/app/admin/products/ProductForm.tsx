@@ -277,7 +277,7 @@ export function ProductForm({ initialData, mode }: ProductFormProps) {
                 type="checkbox"
                 checked={featured}
                 onChange={(e) => setFeatured(e.target.checked)}
-                className="accent-[#c9a84c]"
+                className="accent-[#6e6153]"
               />
               <span className="text-sm text-foreground">Featured product</span>
             </label>

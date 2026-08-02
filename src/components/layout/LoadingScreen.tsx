@@ -2,13 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Wordmark } from "@/components/ui/Wordmark";
 
 export function LoadingScreen() {
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
-    // Animate progress
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
@@ -28,44 +28,27 @@ export function LoadingScreen() {
       {loading && (
         <motion.div
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.6, ease: "easeInOut" }}
+          transition={{ duration: 0.7, ease: "easeInOut" }}
           className="fixed inset-0 z-[10000] flex flex-col items-center justify-center bg-background"
         >
-          {/* Logo */}
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-5xl font-bold tracking-[0.4em]"
-            style={{
-              background: "linear-gradient(135deg, #f5f5f5, #c9a84c)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
           >
-            MAT
-          </motion.h1>
+            <Wordmark showEstablished className="text-4xl md:text-5xl" />
+          </motion.div>
 
-          <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.4 }}
-            className="mt-2 text-[10px] tracking-[0.5em] uppercase text-muted"
-          >
-            Clothing
-          </motion.p>
-
-          {/* Progress bar */}
+          {/* The rule fills as the page loads — same hairline used sitewide */}
           <motion.div
             initial={{ opacity: 0, width: 0 }}
-            animate={{ opacity: 1, width: 120 }}
-            transition={{ delay: 0.5, duration: 0.3 }}
-            className="mt-8 h-[1px] bg-border overflow-hidden"
+            animate={{ opacity: 1, width: 140 }}
+            transition={{ delay: 0.4, duration: 0.4 }}
+            className="mt-10 h-px overflow-hidden bg-border"
           >
-            <motion.div
-              className="h-full bg-accent"
+            <div
+              className="h-full bg-foreground transition-[width] duration-200 ease-out"
               style={{ width: `${Math.min(progress, 100)}%` }}
-              transition={{ ease: "easeOut" }}
             />
           </motion.div>
 
@@ -73,7 +56,7 @@ export function LoadingScreen() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6 }}
-            className="mt-3 text-[10px] font-mono text-muted/50"
+            className="spec-label mt-3"
           >
             {Math.min(Math.round(progress), 100)}%
           </motion.span>

@@ -24,7 +24,7 @@ export default function AdminDashboard() {
             Dashboard
           </h1>
           <p className="mt-1 text-sm text-muted">
-            Manage your MAT Clothing products
+            Manage your Brand Industrys catalogue
           </p>
         </div>
         <Link

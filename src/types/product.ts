@@ -36,4 +36,12 @@ export interface Product {
   tags: string[];
   featured: boolean;
   createdAt: string;
+
+  /**
+   * Care-label spec. Optional so existing products keep working —
+   * the label renders whatever is present and omits the rest.
+   */
+  material?: string;
+  weightGsm?: number;
+  careInstructions?: string;
 }

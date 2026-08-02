@@ -5,9 +5,9 @@ export function middleware(request: NextRequest) {
 
   // Only protect /admin routes (not /admin/login)
   if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
-    const session = request.cookies.get("mat-admin-session");
+    const session = request.cookies.get("bi-admin-session");
 
-    if (session?.value !== "mat-authenticated") {
+    if (session?.value !== "bi-authenticated") {
       return NextResponse.redirect(new URL("/admin/login", request.url));
     }
   }

@@ -1,31 +1,37 @@
-"use client";
+import { ORIGIN, SEASON } from "@/lib/constants";
 
+/**
+ * Running band of shop facts, set in the care-label register so it reads
+ * as selvedge tape rather than a promo bar.
+ *
+ * "New arrivals every week" was dropped — it is a frequency promise the
+ * catalogue does not currently keep.
+ */
 export function MarqueeBanner() {
   const items = [
-    "FREE SHIPPING ON ORDERS ABOVE ₹2,000",
-    "★",
-    "PREMIUM QUALITY GUARANTEED",
-    "★",
-    "NEW ARRIVALS EVERY WEEK",
-    "★",
-    "ORDER VIA WHATSAPP",
-    "★",
+    "Free shipping over ₹2,000",
+    "Order over WhatsApp",
+    "Size confirmed before dispatch",
+    ORIGIN,
+    `${SEASON} collection`,
   ];
 
-  const repeated = [...items, ...items, ...items, ...items];
+  // Two passes so the -50% keyframe loops seamlessly.
+  const track = [...items, ...items, ...items, ...items];
 
   return (
-    <div className="overflow-hidden border-y border-accent/10 bg-accent/[0.03] py-3">
+    <div
+      className="overflow-hidden border-b border-border bg-label py-3"
+      aria-hidden
+    >
       <div
-        className="flex whitespace-nowrap"
-        style={{ animation: "marquee 30s linear infinite" }}
+        className="flex w-max whitespace-nowrap motion-reduce:animate-none"
+        style={{ animation: "marquee 42s linear infinite" }}
       >
-        {repeated.map((text, i) => (
-          <span
-            key={i}
-            className="mx-6 text-[11px] tracking-[0.3em] uppercase text-accent/60"
-          >
-            {text}
+        {track.map((text, i) => (
+          <span key={i} className="spec-label flex items-center">
+            <span className="px-6">{text}</span>
+            <span className="text-accent-soft">/</span>
           </span>
         ))}
       </div>

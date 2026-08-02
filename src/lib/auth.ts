@@ -1,8 +1,8 @@
 import { cookies } from "next/headers";
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "shaheer";
-const SESSION_COOKIE = "mat-admin-session";
-const SESSION_TOKEN = "mat-authenticated";
+const SESSION_COOKIE = "bi-admin-session";
+const SESSION_TOKEN = "bi-authenticated";
 
 export async function verifySession(): Promise<boolean> {
   const cookieStore = await cookies();
